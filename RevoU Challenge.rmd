@@ -1,0 +1,189 @@
+# 1. Introduction
+This is an exercise, a challenge given out by RevoU, an Indonesian online tech academy, to public who follows their YouTube live sessions to practice the main responsibilities of a data analyst.
+*****
+## 1.1 Case Study Instruction
+**Context**
+Gaming industry is an interesting field to explore, it would be fun knowing who is the most popular publishers and developers, and which games are the most popular.
+*****
+## 1.2 Content data
+
+* Name: Name of the game
+* Sales: Sales of the game
+* Series: Series of the game
+* Release: Release of the game
+* Genre: Genre of the game
+* Developer: Developer of the game
+* Publisher: Publisher of the game
+
+*****
+## 1.3 Questions to be answered
+
+* Which game is the oldest and the newest games in that dataset?
+* Which publisher published most of the games?
+* Which developer developed most of the games?
+* Which series is the most sales?
+* Which series have the most games?
+
+*****
+# 2. Preparing the Data
+This phase is where I will prepare the data for cleaning and analysis.
+*****
+## 2.1 Assigning Variables
+```{r Assigning Variables}
+games_sales <- read.csv("../input/games-sales-revou-challenge-dataset/Games Sales - RevoU Challenge.csv")
+```
+*****
+## 2.2 Install Packages
+Prepare the packages for further cleaning, analysis, and visualizations.
+```{r}
+install.packages("tidyverse")
+install.packages("lubridate")
+```
+*****
+## 2.3 Load the Packages
+```{r Package Load}
+library(tidyverse)
+library(lubridate)
+```
+*****
+## 2.4 Preview Dataset
+I'll be using the head() and summary() to preview the details of the data.
+```{r Head function}
+head(games_sales)
+```
+
+```{r Summary function}
+summary(games_sales)
+```
+
+```{r Colnames function}
+colnames(games_sales)
+```
+
+*****
+# 3. Data Cleaning
+As seen in glimpse, all data except the Sales field are characters.
+```{r Glimpse function}
+glimpse(games_sales)
+```
+
+Now we need to check for any duplications.
+```{r Sum duplicated}
+sum(duplicated(games_sales))
+
+games_sales <- distinct(games_sales)
+```
+2 rows are duplicated, and they are removed.
+
+Since all the data are mandatory to answer the questions, even with many NA values in the Series field, I will keep the column in the analysis and visualization phase.
+
+##3.1 Data Formatting
+```{r formatted_table}
+# Create a new table: formatted_table
+formatted_table <- games_sales %>%
+  rename(date = Release) %>%
+  mutate(date = as_date(date, format = "%m/%d/%Y"))
+```
+
+
+*****
+# 4. Data Analysis & Visualization
+
+```{r}
+# Bar chart for Steps
+
+```
+
+*****
+# 5. Answering stakeholder's Questions
+This part is where I'll be answering the questions. 
+
+## 5.1 Which game is the oldest and the newest games in that dataset?
+```{r Sorting table}
+# Date sorted from oldest
+oldest_date <- formatted_table[order(as.Date(formatted_table$date)),]
+
+head(oldest_date)
+
+# Date sorted from earliest
+earliest_date <- formatted_table[rev(order(as.Date(formatted_table$date))),]
+
+head(earliest_date)
+```
+**Answer:**
+* Oldest game: Hydlide
+* Newest game: Valheim
+
+## 5.2 Which publisher published most of the games?
+```{r Most published by Publisher}
+most_published <- formatted_table %>%
+  group_by(Publisher) %>%
+  summarise(total_published = n()) %>%
+  arrange(desc(total_published))
+
+head(most_published)
+```
+**Electronic Arts** is the publisher that published most of the games.
+
+## 5.3 Which developer developed most of the games?
+```{r Most Developed by Developer}
+# New table for Most Developed
+most_developed <- formatted_table %>%
+  group_by(Developer) %>%
+  summarise(total_developer = n()) %>%
+  arrange(desc(total_developer))
+
+# View table
+head(most_developed)
+```
+**Blizzard Entertainment** is the developer that developed most of the games.
+
+## 5.4 Which series is the most sales?
+```{r Most Sales by Series}
+# New table for Most Sales
+series_sales <- formatted_table %>%
+  group_by(Series) %>%
+  summarise(Sales) %>%
+  arrange(desc(Sales))
+
+# Remove rows with NA values
+series_sales <- series_sales[!(is.na(series_sales$Series) | series_sales$Series == ""), ]
+
+# View table
+head(series_sales)
+```
+**Minecraft** is the series with most sales.
+
+## 5.5 Which series have the most games?
+```{r Series with Most Games}
+# New table, total games in Series
+series_games <- formatted_table %>%
+  group_by(Series) %>%
+  summarise(total_games = n()) %>%
+  arrange(desc(total_games))
+
+# Remove rows with NA values
+series_games <- series_games[!(is.na(series_games$Series) | series_games$Series == ""), ]
+
+# View table
+```
+**StarCraft** is the series that have the most games.
+
+*****
+# 6. Conclusion
+
+* **Which game is the oldest and the newest games in that dataset?**
+  * Oldest game: Hydlide, date 1984-12-01
+  * Newest game: Valheim, date 2021-02-01
+  
+* **Which publisher published most of the games?**
+  * Electronic Arts
+
+* **Which developer developed most of the games?**
+  * Blizzard Entertainment
+
+* **Which series is the most sales?**
+  * Minecraft
+
+* **Which series have the most games?**
+  * StarCraft
