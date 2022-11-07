@@ -2,7 +2,7 @@
 Data Analyst Mini Challenge by RevoU
 
 * **Games Sales - RevoU Challenge.csv** is the dataset
-* **Games Sales - RevoU Challenge.csv** is the R Notebook file to show the whole working process from start to finish.
+* **RevoU Challenge.rmd** is the R Notebook file to show the whole working process from start to finish.
 
 This is a mini challenge given to those who follow RevoU's mini courses. It's a simple task to answer questions given by the stakeholder.
 
